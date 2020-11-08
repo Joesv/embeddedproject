@@ -3,17 +3,28 @@
  * vergeet niet de taskscheduler bestanden in een map genaamd func te doen
  * 
  * Created: 11/7/2020 7:58:54 PM
- * Author : joes vos
+ * Author : Joes Vos, Bryant Vincken
  */ 
 
 #include <avr/io.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define F_CPU 16E6
+#define F_CPU 16000000
 #include <avr/io.h>
 #include <avr/sfr_defs.h>
 #include <util/delay.h>
 #include <avr/eeprom.h>
+#include <avr/interrupt.h>
+
+#define BAUD 9600 //maximum frequentie bits per seconde
+#define BRC ((F_CPU/16/BAUD) -1) //Baud rate calculator = 16 bits
+#define RX_BUFFER_SIZE 128
+
+char rxBuffer[RX_BUFFER_SIZE]; //rxBuffer heeft lijst met 128 lijnen
+uint8_t rxReadPos = 0;
+uint8_t rxWritePos = 0;
+char getChar(void);
+char peekChar(void);
 
 //byte en word locaties in eeprom:
 #define checkBitLocatie 0x30
@@ -25,17 +36,16 @@
 
 #include "func/AVR_TTC_scheduler.c"
 
-
 #define VREF 5
 #define UBBRVAL 51
 #define temperature 2
 #define light 3
-#define type temperature 
+#define type temperature //Kan aangepast worden naar lichtsensor 
 
 #define isDown 0
 
 int ledstate = 0;
-int isChanging = 0;
+int isChanging = 0; //Laat het lampje knipperen
 uint16_t sensorVal;
 
 uint8_t byteval;
@@ -48,11 +58,13 @@ uint16_t lightLower = 0x00CD; //205, ongeveer 20%
 uint16_t lightUpper = 0x0300; //768, ongeveer 75%
 
 void uart_init() {
-	UBRR0H = 0;
-	UBRR0L = UBBRVAL;
-	UCSR0A = 0;
-	UCSR0B = _BV(TXEN0);
-	UCSR0C = _BV(UCSZ01) |  _BV(UCSZ00);
+	
+	UBRR0H = (BRC >> 8);
+	UBRR0L = (BRC);
+	UCSR0A = 0; //status data
+	UCSR0B = (1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0); //Zet TX en RX aan, en zet een Intterupt bit voor RX
+	UCSR0C = (1 << UCSZ01) |  (1 << UCSZ00); //8 bits
+	sei(); //zet external interrupts aan
 }
 //transmit de int
 void transmit(uint16_t data){
@@ -211,20 +223,68 @@ void setupTasks(){
 	SCH_Add_Task(startupBroadcast, 10,0); //broadcast eenmalig de gegevens wanneer er een serial verbinding is
 }
 
+void handleCommands(char inp){
+	if(inp == '1'){
+		PORTB = 0x00;
+		PORTB ^= 0b00000001; //Zet LED1 aan
+		} else if(inp == '2'){
+		PORTB = 0x00;
+		PORTB = 0b00000010; //Zet LED2 aan
+		} else if (inp == '3'){
+		PORTB = 0x00;
+		PORTB ^= 0b00000100; //Zet LED3 aan
+		} else if(inp == '4'){
+		PORTB = 0x00;
+		PORTB ^= 0b00001000; //Zet LED4 aan
+		} else if (inp == '0'){
+		PORTB = 0x00; //Zet alle LED's uit
+	}
+}
 
+char peekChar(void){ //Returnt het eerst volgende karakter dat gelezen gaat worden
+	char ret = '\0';
+	
+	if(rxReadPos != rxWritePos){
+		ret = rxBuffer[rxReadPos];
+	}
+	return ret;
+}
 
+char getChar(void){ //Haalt karakter op dat moet worden gelezen en increment de leespositie
+	char ret = '\0';
+	
+	if(rxReadPos != rxWritePos){ //Als er nieuwe data is maar de readposition staat achter op de 
+		ret = rxBuffer[rxReadPos];
+		rxReadPos++;
+		
+		if(rxReadPos >= RX_BUFFER_SIZE){
+			rxReadPos = 0;
+		}
+		return ret;
+	}
+}
+
+ISR(USART_RX_vect){  //De interrupt
+	
+	rxBuffer[rxWritePos] = UDR0; //UDR0 is wat er in gelezen word vanaf serial
+	rxWritePos++;
+	
+	if(rxWritePos >= RX_BUFFER_SIZE){ // Als de buffer van 128 vol is
+		rxWritePos = 0; //rxWritePos is 0
+	}
+}
 
 int main() {
 	SCH_Init_T1(); //task initialeren
 	uart_init(); // serial verbinding
 	InitADC(); //analoog naar digitaal converter initialiseren
-	DDRB = (1<<DDB1); //naar output zetten voor het ledje
+	DDRB = 0b00001111; //naar output zetten voor het ledje
 	//initSettings();
 	setupTasks(); 
 	SCH_Start();
 	while(1){
 		SCH_Dispatch_Tasks();
-	}
-
-	
+		char c = getChar(); //Haalt karakter op van serial bus
+		handleCommands(c);
+	}	
 }

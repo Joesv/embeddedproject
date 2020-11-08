@@ -1,6 +1,4 @@
 import serial
-import struct
-import binascii
 
 #klasse om te gebruiken met een arduino naar keuze
 class CentraleUnit: 
@@ -33,5 +31,5 @@ class CentraleUnit:
 
 
 arduino = CentraleUnit("COM4", "TempSensor") #//Maakt een CentraleUnit object met een verbinding via COM4 met als typenaam TempSensor
-arduino.sendcommand('3') #//Verstuurt '2' als byte over de serial port naar de arduino 
+arduino.sendcommand('0') #//Verstuurt '2' als byte over de serial port naar de arduino 
 print(arduino.checkPort())
