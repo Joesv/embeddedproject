@@ -17,16 +17,21 @@ class CentraleUnit:
     
     def getTypeModel(self):
         return self.typemodel
+    
+    def readCommand(self): #// readcommand is nodig om correct een byte te versturen. Zonder aanroep van deze methode werkt het versturen op serial niet. 
+        self.serialCon.readline()
 
     def sendcommand(self, n): #// n = cijfer dat een actie triggert in de c code op de arduino
+        self.readCommand() #//Readcommand is nodig om sendCommand() correct te gebruiken
         self.serialCon.write(n.encode())
 
-    def readCommand(self): #// readcommand is nodig om correct een byte te versturen. Zonder daanroep van deze methode werkt het versturen op serial niet. 
-        self.serialCon.readline()
+
+    def checkPort(self): #//Returnt welke poort er daadwerkelijk wordt gebruikt voor seriële communicatie
+        return self.serialCon.name
 
     
 
 
 arduino = CentraleUnit("COM4", "TempSensor") #//Maakt een CentraleUnit object met een verbinding via COM4 met als typenaam TempSensor
-arduino.readCommand() #//Readcommand is nodig om sendCommand correct te gebruiken
-arduino.sendcommand('2') #//Verstuurt '2' als byte over de serial port naar de arduino
+arduino.sendcommand('3') #//Verstuurt '2' als byte over de serial port naar de arduino 
+print(arduino.checkPort())

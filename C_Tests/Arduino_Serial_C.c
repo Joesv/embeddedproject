@@ -26,6 +26,24 @@ uint8_t rxWritePos = 0;
 char getChar(void);
 char peekChar(void);
 
+void handleCommands(char inp){
+	if(inp == '1'){
+		PORTB = 0x00;
+		PORTB ^= 0b00000001; //Zet LED1 aan
+		} else if(inp == '2'){
+		PORTB = 0x00;
+		PORTB = 0b00000010; //Zet LED2 aan
+		} else if (inp == '3'){
+		PORTB = 0x00;
+		PORTB ^= 0b00000100; //Zet LED3 aan
+		} else if(inp == '4'){
+		PORTB = 0x00;
+		PORTB ^= 0b00001000; //Zet LED4 aan
+		} else if (inp == '0'){
+		PORTB = 0x00; //Zet alle LED's uit
+	}
+}
+
 int main(void)
 {
     UBRR0H = (BRC >> 8); //High byte shift 8 plaatsen om de hoogste 8 bits te pakken en plaatst deze in baudrate registerH
@@ -41,18 +59,7 @@ int main(void)
     while (1) 
     {
 		char c = getChar(); //Haalt karakter op van serial bus
-		
-		if(c == '1'){
-			PORTB ^= 0b00000001; //Zet de LED aan
-		} else if(c == '2'){
-			PORTB = 0b00000010;
-		} else if (c == '3'){
-			PORTB ^= 0b00000100;
-		} else if(c == '4'){
-			PORTB ^= 0b00001000;;
-		} else if (c == '0'){
-			PORTB = 0x00;
-		}
+		handleCommands(c);
     }
 }
 
