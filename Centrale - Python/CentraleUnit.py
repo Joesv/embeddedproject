@@ -30,6 +30,6 @@ class CentraleUnit:
     
 
 
-arduino = CentraleUnit("COM4", "TempSensor") #//Maakt een CentraleUnit object met een verbinding via COM4 met als typenaam TempSensor
-arduino.sendcommand('0') #//Verstuurt '2' als byte over de serial port naar de arduino 
-print(arduino.checkPort())
+#arduino = CentraleUnit("COM3", "TempSensor") #//Maakt een CentraleUnit object met een verbinding via COM4 met als typenaam TempSensor
+#arduino.sendcommand('0') #//Verstuurt '2' als byte over de serial port naar de arduino 
+#print(arduino.checkPort())
