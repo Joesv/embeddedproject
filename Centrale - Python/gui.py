@@ -1,9 +1,13 @@
 import tkinter as tk
+from tkinter import *
 import sys
 sys.path.append("..") # Path zetten voor imports
 from CentraleUnit import CentraleUnit # Import van CentraleUnit klasse
+import time
+import serial
+from serial import SerialException
 
-
+portnames = {"COM0", "COM1", "COM2", "COM3", "COM4", "COM5"}
 
 class MainUI(tk.Tk):
     # Er moet hier ergens een while loop komen die om de halve minuut gegevens van de arduino ophaalt
@@ -11,7 +15,8 @@ class MainUI(tk.Tk):
     def __init__(self, *args, **kwargs):
         
         self.arduinolist = [] #Lijst waar de arduino's in komen te staan
-        self.isRunning = True
+        self.isRunning = True # Boolean om aan te geven of het programma nog draait
+        self.sluitUnitAan()
 
         tk.Tk.__init__(self, *args, **kwargs)
         
@@ -20,8 +25,6 @@ class MainUI(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         
-        
-
         self.frames = {}
 
         for F in (Unit1, Unit2):
@@ -39,9 +42,21 @@ class MainUI(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-    def sluitUnitAan(self): #Methode om Arduino aan te sluiten. 
-        arduino = CentraleUnit("COM4", "TempSensor")
-        self.arduinolist.append(arduino)
+    def portIsUsable(self, portName): ## Kijkt of de poorten bruikbaar zijn
+        try:
+            ser = serial.Serial(port=portName)
+            return True
+        except:
+            return False
+    
+    def sluitUnitAan(self): #Methode om Arduino aan te sluiten.
+            for i in portnames: 
+                if self.portIsUsable(i) == True:
+                    arduino = CentraleUnit(i)
+                    arduino.getInitData()
+                    self.arduinolist.append(arduino)
+                else :
+                    pass
 
     def getArduinoFromList(self):
         for i in self.arduinolist:
@@ -57,11 +72,15 @@ class Unit1(tk.Frame):
         tk.Frame.__init__(self,parent)
         button1 = tk.Button(self, text="Unit 1", 
                             command=lambda: controller.show_frame(Unit1))
-        button1.grid(row = 0, column = 0)
+        button1.grid(row = 0, column = 0, pady = 10, padx = 20)
         button2 = tk.Button(self, text="Unit 2", 
                             command=lambda: controller.show_frame(Unit2))
-        button2.grid(row = 1, column = 0)
+        button2.grid(row = 1, column = 0, pady = 10, padx = 20)
         labelinstellingen = tk.Label(self, text="Instellingen").grid(row=0, column = 3)
+        acttemplabel = tk.Label(self, text=f"Huidige minimumtemperatuur: {round(controller.getArduinoFromList().getMinValue(), 2)}")
+        acttemplabel.grid(row=1, column = 1)
+        acttemplabel = tk.Label(self, text=f"Huidige maximumtemperatuur: {round(controller.getArduinoFromList().getMaxValue(), 2)}")
+        acttemplabel.grid(row=2, column = 1)
         mintemplabel = tk.Label(self, text="Minimum temperatuur:").grid(row=1, column = 2)
         mintempentry = tk.Entry(self).grid(row=1, column = 3)
         maxtemplabel = tk.Label(self, text="Maximum temperatuur:").grid(row=2, column = 2)
@@ -70,15 +89,15 @@ class Unit1(tk.Frame):
         buttonomhoog = tk.Button(self, text="Scherm omhoog").grid(row = 4, column = 2, pady = 10)
         buttonomlaag = tk.Button(self, text="Scherm omlaag").grid(row = 4, column = 3, pady = 10)
         buttonled1 = tk.Button(self, text="LED1", command=lambda: controller.getArduinoFromList().sendcommand('1'))
-        buttonled1.grid(row = 5, column = 1, pady = 5)
+        buttonled1.grid(row = 5, column = 1, pady = 10, padx = 5)
         buttonled2 = tk.Button(self, text="LED2", command=lambda: controller.getArduinoFromList().sendcommand('2'))
-        buttonled2.grid(row = 5, column = 2, pady = 5)
+        buttonled2.grid(row = 5, column = 2, pady = 10, padx = 5)
         buttonled3 = tk.Button(self, text="LED3", command=lambda: controller.getArduinoFromList().sendcommand('3'))
-        buttonled3.grid(row = 5, column = 3, pady = 5)
+        buttonled3.grid(row = 5, column = 3, pady = 10, padx = 5)
         buttonled4 = tk.Button(self, text="LED4", command=lambda: controller.getArduinoFromList().sendcommand('4'))
-        buttonled4.grid(row = 5, column = 4, pady = 5)
+        buttonled4.grid(row = 5, column = 4, pady = 10, padx = 5)
         buttonled5 = tk.Button(self, text="LEDUIT", command=lambda: controller.getArduinoFromList().sendcommand('0'))
-        buttonled5.grid(row = 5, column = 5, pady = 5)
+        buttonled5.grid(row = 5, column = 5, pady = 10, padx = 5)
 
 
 

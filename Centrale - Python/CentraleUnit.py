@@ -62,13 +62,13 @@ class CentraleUnit:
 
 ########## TEST CODE ###########
 
-arduino = CentraleUnit("COM4") #//Maakt een CentraleUnit object met een verbinding via COM4 met als typenaam TempSensor
-arduino.getInitData()
-print(arduino.getTypeModel())
-print(arduino.getMinValue())
-print(arduino.getMaxValue())
-arduino.sendcommand('1') #//Verstuurt '2' als byte over de serial port naar de arduino 
-print(arduino.checkPort())
-print(arduino.receiveData())
-time.sleep(2)
-print(arduino.receiveData())
+#arduino = CentraleUnit("COM4") #//Maakt een CentraleUnit object met een verbinding via COM4 met als typenaam TempSensor
+#arduino.getInitData()
+#print(arduino.getTypeModel())
+#print(arduino.getMinValue())
+#print(arduino.getMaxValue())
+#arduino.sendcommand('1') #//Verstuurt '2' als byte over de serial port naar de arduino 
+#print(arduino.checkPort())
+#print(arduino.receiveData())
+#time.sleep(2)
+#print(arduino.receiveData())
