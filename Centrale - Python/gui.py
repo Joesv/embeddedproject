@@ -6,10 +6,12 @@ from CentraleUnit import CentraleUnit # Import van CentraleUnit klasse
 
 
 class MainUI(tk.Tk):
+    # Er moet hier ergens een while loop komen die om de halve minuut gegevens van de arduino ophaalt
 
     def __init__(self, *args, **kwargs):
         
         self.arduinolist = [] #Lijst waar de arduino's in komen te staan
+        self.isRunning = True
 
         tk.Tk.__init__(self, *args, **kwargs)
         
