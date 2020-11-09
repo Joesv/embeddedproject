@@ -64,12 +64,15 @@ class MainUI(tk.Tk):
             return i
 
     def haalTemperatuur(self):
-            for i in self.arduinolist:
-                temperatuurdata = i.receiveData()
-                temperatuurinc = round(i.convertToC(int(temperatuurdata[4:7])), 2) #Temperatuur is de data die door de formule gaat om Celsisus te berekenen, temperatuurdata[4:7] als int met een round van 2 decimalen
-                i.setTemperature(temperatuurinc) #Geef de temperatuur waarde door aan de private variabele van de arduino
-            self.after(2000, self.haalTemperatuur)
+        for i in self.arduinolist:
+            temperatuurdata = i.receiveData()
+            temperatuurinc = round(i.convertToC(int(temperatuurdata[4:7])), 2) #Temperatuur is de data die door de formule gaat om Celsisus te berekenen, temperatuurdata[4:7] als int met een round van 2 decimalen
+            i.setTemperature(temperatuurinc) #Geef de temperatuur waarde door aan de private variabele van de arduino
+            print(i.getTemperature()) #Weet niet hoe ik deze waarde kan updaten in het frame
+        self.after(30000, self.haalTemperatuur)
 
+    def setLabelTemp(self, temp):
+        return temp
    
 class Unit1(tk.Frame):
 
@@ -88,7 +91,7 @@ class Unit1(tk.Frame):
         mintemplabel.grid(row=1, column = 1, pady = 10, padx = 20)
         maxtemplabel = tk.Label(self, text=f"Huidige maximumtemperatuur: {round(controller.getArduinoFromList().getMaxValue(), 2)}") # Haalt maximum temperatuur van unit op
         maxtemplabel.grid(row=2, column = 1, pady = 10, padx = 20)
-        acttemplabel = tk.Label(self, text=f"Huidige temperatuur: {round(controller.getArduinoFromList().getTemperature(), 2)}") #Haalt minimum temperatuur van unit op
+        acttemplabel = tk.Label(self, text=f"Huidige temperatuur: {str(controller.getArduinoFromList().getTemperature())}") #Haalt minimum temperatuur van unit op
         acttemplabel.grid(row=2, column = 2, pady = 10, padx = 20)
         mintemplabel = tk.Label(self, text="Minimum temperatuur:").grid(row=1, column = 3)
         mintempentry = tk.Entry(self).grid(row=1, column = 4)
