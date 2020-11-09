@@ -9,6 +9,7 @@ class CentraleUnit:
         self.typemodel = ""
         self.minvalue = 0
         self.maxvalue = 0
+        self.temperature = 0
 
     def getCOMPort(self):
         return self.COMport
@@ -25,6 +26,12 @@ class CentraleUnit:
     def getMaxValue(self):
         return self.maxvalue
     
+    def setTemperature(self, temperature):
+        self.temperature = temperature
+    
+    def getTemperature(self):
+        return self.temperature
+
     def convertToC(self, value): #Formule om waarde van C om te rekenen naar graden Celcius
         return ((value * 5/1024)-0.5) *100
     

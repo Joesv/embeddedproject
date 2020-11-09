@@ -3,7 +3,7 @@
  * vergeet niet de taskscheduler bestanden in een map genaamd func te doen
  * 
  * Created: 11/7/2020 7:58:54 PM
- * Author : Joes Vos, Bryant Vincken
+ * Author : joes vos
  */ 
 
 #include <avr/io.h>
@@ -16,7 +16,7 @@
 #include <avr/eeprom.h>
 #include <avr/interrupt.h>
 
-#define BAUD 9600 //maximum frequentie bits per seconde
+#define BAUD 19200 //maximum frequentie bits per seconde
 #define BRC ((F_CPU/16/BAUD) -1) //Baud rate calculator = 16 bits
 #define RX_BUFFER_SIZE 128
 
@@ -40,7 +40,7 @@ char peekChar(void);
 #define UBBRVAL 51
 #define temperature 2
 #define light 3
-#define type temperature //Kan aangepast worden naar lichtsensor 
+#define type temperature 
 
 #define isDown 0
 
@@ -286,5 +286,7 @@ int main() {
 		SCH_Dispatch_Tasks();
 		char c = getChar(); //Haalt karakter op van serial bus
 		handleCommands(c);
-	}	
+	}
+
+	
 }
