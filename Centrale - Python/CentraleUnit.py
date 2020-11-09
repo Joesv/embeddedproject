@@ -24,6 +24,12 @@ class CentraleUnit:
 
     def getMaxValue(self):
         return self.maxvalue
+    
+    def convertToC(self, value): #Formule om waarde van C om te rekenen naar graden Celcius
+        return ((value * 5/1024)-0.5) *100
+    
+    def convertToVoltage(self, value): #Formule om graden Celsius om te rekenen naar Voltage
+        return (value / 100 + 0.5) * 1024 / 5
 
     def getInitData(self):
         initdata = self.serialCon.readline().decode() #Ontcijfer wat er binnenkomt
@@ -31,8 +37,10 @@ class CentraleUnit:
 
         if typemodel == 'tmp': #Als het een temperatuursensor betreft:
             self.typemodel = "TempSensor"
-            self.minvalue = initdata[10:13]
-            self.maxvalue = initdata[14:]
+            self.minvalue = int(initdata[10:13])
+            self.maxvalue = int(initdata[14:])
+            self.minvalue = self.convertToC(self.minvalue)
+            self.maxvalue = self.convertToC(self.maxvalue)
         else: #Als het een lichtsensor betreft:
             typemodel = "LightSensor"
     
