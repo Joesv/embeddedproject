@@ -59,10 +59,11 @@ uint16_t lightUpper = 0x0300; //768, ongeveer 75%
 
 void uart_init() {
 	
-	UBRR0H = (BRC >> 8);
-	UBRR0L = (BRC);
+	UBRR0H = (BRC >> 8); //High byte van UBBR0H / hierin staat de baudrate snelheid
+	UBRR0L = (BRC);      //Lower byte van UBBR0H / hierin staat de baudrate snelheid
 	UCSR0A = 0; //status data
 	UCSR0B = (1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0); //Zet TX en RX aan, en zet een Intterupt bit voor RX
+	                                                      //Wanneer er nieuwe data binnenkomt op de RX word een interrupt getriggert die word afgehandeld in de ISR(USART_RX_vect) methode
 	UCSR0C = (1 << UCSZ01) |  (1 << UCSZ00); //8 bits
 	sei(); //zet external interrupts aan
 }

@@ -6,7 +6,7 @@ import threading
 class CentraleUnit: 
     def __init__(self, COMport):
         self.COMport = COMport
-        self.serialCon = serial.Serial(port=self.COMport, baudrate = 19200) #//Timeout op 2 laten staan, dit geeft de arduino genoeg denktijd om python the processen
+        self.serialCon = serial.Serial(port=self.COMport, baudrate = 19200)
         self.typemodel = ""
         self.minvalue = 0
         self.maxvalue = 0
@@ -53,7 +53,7 @@ class CentraleUnit:
             typemodel = "LightSensor"
     
     def readCommand(self): #// readcommand is nodig om correct een byte te versturen. Zonder aanroep van deze methode werkt het versturen op serial niet. 
-        self.serialCon.readline()
+        self.serialCon.readline().decode("ascii")
 
     def sendcommand(self, n): #// n = cijfer dat een actie triggert in de c code op de arduino
         self.readCommand() #//Readcommand is nodig om sendCommand() correct te gebruiken

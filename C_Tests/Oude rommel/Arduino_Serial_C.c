@@ -49,7 +49,9 @@ int main(void)
     UBRR0H = (BRC >> 8); //High byte shift 8 plaatsen om de hoogste 8 bits te pakken en plaatst deze in baudrate registerH
     UBRR0L = (BRC);      //Lower byte is BRC, de laagste 8 bits en plaatst deze in baudrate registerL
 	
-	UCSR0B = (1 << RXEN0) | (1 << RXCIE0); //"UCSR0B = USART Control and Status Register B" //Zet de receiver aan = "RX op arduino", en set bit for interrupt enable, elke nieuwe data die binnenkomt triggert de interrupt
+	UCSR0B = (1 << RXEN0) | (1 << RXCIE0); //"UCSR0B = USART Control and Status Register B" //Zet de receiver aan = "RX op arduino", 
+	                                       //en set bit for interrupt enable, elke nieuwe data die binnenkomt triggert de interrupt
+										   
 	UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); //Zet de character size die de receiver kan gebruiken // 8 bits
 	
 	DDRB = 0b00001111; //Zet DDRB port 8, 9, 10 en 11 op output
