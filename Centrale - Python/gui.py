@@ -63,14 +63,24 @@ class MainUI(tk.Tk):
         for i in self.arduinolist:
             return i
 
-    def haalTemperatuur(self):
+    def getTempSensorFromList(self):
         for i in self.arduinolist:
-            temperatuurdata = i.receiveData()
-            temperatuurinc = round(i.convertToC(int(temperatuurdata[4:7])), 2) #Temperatuur is de data die door de formule gaat om Celsisus te berekenen, temperatuurdata[4:7] als int met een round van 2 decimalen
-            i.setTemperature(temperatuurinc) #Geef de temperatuur waarde door aan de private variabele van de arduino
-            print(i.getTemperature()) #Weet niet hoe ik deze waarde kan updaten in het frame
-            self.frames[Unit1].acttemplabel.config(text=f"Huidige temperatuur unit: {i.getTemperature()} C°")
-        self.after(3000, self.haalTemperatuur)
+            if i.getTypeModel() == "TempSensor":
+                return i
+
+    def getLichtSensorFromList(self):
+        for i in self.arduinolist:
+            if i.getTypeModel() == "LightSensor":
+                return i
+    
+    def haalTemperatuur(self):
+        i = self.getTempSensorFromList()
+        temperatuurdata = i.receiveData()
+        temperatuurinc = round(i.convertToC(int(temperatuurdata[4:7])), 2) #Temperatuur is de data die door de formule gaat om Celsisus te berekenen, temperatuurdata[4:7] als int met een round van 2 decimalen
+        i.setTemperature(temperatuurinc) #Geef de temperatuur waarde door aan de private variabele van de arduino
+        print(i.getTemperature()) #Weet niet hoe ik deze waarde kan updaten in het frame
+        self.frames[Unit1].acttemplabel.config(text=f"Huidige temperatuur unit: {i.getTemperature()} C°")
+        self.after(30000, self.haalTemperatuur)
 
 
    
@@ -88,9 +98,9 @@ class Unit1(tk.Frame):
                             command=lambda: controller.show_frame(Unit2))
         button2.grid(row = 1, column = 0, pady = 10, padx = 20)
         labelinstellingen = tk.Label(self, text="Instellingen").grid(row=0, column = 4)
-        mintemplabel = tk.Label(self, text=f"Huidige minimumtemperatuur: {round(controller.getArduinoFromList().getMinValue(), 2)}") #Haalt minimum temperatuur van unit op
+        mintemplabel = tk.Label(self, text=f"Huidige minimumtemperatuur: {round(controller.getTempSensorFromList().getMinValue(), 2)}") #Haalt minimum temperatuur van unit op
         mintemplabel.grid(row=1, column = 1, pady = 10, padx = 20)
-        maxtemplabel = tk.Label(self, text=f"Huidige maximumtemperatuur: {round(controller.getArduinoFromList().getMaxValue(), 2)}") # Haalt maximum temperatuur van unit op
+        maxtemplabel = tk.Label(self, text=f"Huidige maximumtemperatuur: {round(controller.getTempSensorFromList().getMaxValue(), 2)}") # Haalt maximum temperatuur van unit op
         maxtemplabel.grid(row=2, column = 1, pady = 10, padx = 20)
         mintemplabel = tk.Label(self, text="Minimum temperatuur:").grid(row=1, column = 3)
         mintempentry = tk.Entry(self).grid(row=1, column = 4)
@@ -101,15 +111,15 @@ class Unit1(tk.Frame):
         opslaanbutton = tk.Button(self, text="Instellingen opslaan").grid(row = 3, column = 4)
         buttonomhoog = tk.Button(self, text="Scherm omhoog").grid(row = 4, column = 2, pady = 10)
         buttonomlaag = tk.Button(self, text="Scherm omlaag").grid(row = 4, column = 3, pady = 10)
-        buttonled1 = tk.Button(self, text="LED1", command=lambda: controller.getArduinoFromList().sendcommand('1'))
+        buttonled1 = tk.Button(self, text="LED1", command=lambda: controller.getTempSensorFromList().sendcommand('1'))
         buttonled1.grid(row = 5, column = 1, pady = 10, padx = 5)
-        buttonled2 = tk.Button(self, text="LED2", command=lambda: controller.getArduinoFromList().sendcommand('2'))
+        buttonled2 = tk.Button(self, text="LED2", command=lambda: controller.getTempSensorFromList().sendcommand('2'))
         buttonled2.grid(row = 5, column = 2, pady = 10, padx = 5)
-        buttonled3 = tk.Button(self, text="LED3", command=lambda: controller.getArduinoFromList().sendcommand('3'))
+        buttonled3 = tk.Button(self, text="LED3", command=lambda: controller.getTempSensorFromList().sendcommand('3'))
         buttonled3.grid(row = 5, column = 3, pady = 10, padx = 5)
-        buttonled4 = tk.Button(self, text="LED4", command=lambda: controller.getArduinoFromList().sendcommand('4'))
+        buttonled4 = tk.Button(self, text="LED4", command=lambda: controller.getTempSensorFromList().sendcommand('4'))
         buttonled4.grid(row = 5, column = 4, pady = 10, padx = 5)
-        buttonled5 = tk.Button(self, text="LEDUIT", command=lambda: controller.getArduinoFromList().sendcommand('0'))
+        buttonled5 = tk.Button(self, text="LEDUIT", command=lambda: controller.getTempSensorFromList().sendcommand('0'))
         buttonled5.grid(row = 5, column = 5, pady = 10, padx = 5)
 
 
