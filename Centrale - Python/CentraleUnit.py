@@ -55,12 +55,26 @@ class CentraleUnit:
         self.serialCon.readline()
 
     def sendcommand(self, n): #// n = cijfer dat een actie triggert in de c code op de arduino
-        if isinstance(n, int): # Als n een cijfer is dan is het een temperatuurinstelling die verstuurt moet worden
-            if n <= 255: #Getal moet in 8 bits passen
-                n = int(n * 10)
-                n = str(n)
         self.readCommand() #//Readcommand is nodig om sendCommand() correct te gebruiken
         self.serialCon.write(n.encode())
+
+    def sendMinSetting(self, n):
+        if isinstance(n, int): # Als n een cijfer is dan is het een temperatuurinstelling die verstuurt moet worden
+            if n <= 255: #Getal moet in 8 bits passen
+                n = str(n)
+                self.readCommand() #//Readcommand is nodig om sendCommand() correct te gebruiken
+                self.serialCon.write(n.encode())
+            else:
+                pass
+
+    def sendMaxSetting(self, n):
+        if isinstance(n, int): # Als n een cijfer is dan is het een temperatuurinstelling die verstuurt moet worden
+            if n <= 255: #Getal moet in 8 bits passen
+                n = str(n)
+                self.readCommand() #//Readcommand is nodig om sendCommand() correct te gebruiken
+                self.serialCon.write(n.encode())
+            else:
+                pass
 
     def receiveData(self): #Methode om data op te halen vanuit de seriële verbinding met de arduino
         data = self.serialCon.readline().decode("ascii")

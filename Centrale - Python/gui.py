@@ -73,22 +73,23 @@ class MainUI(tk.Tk):
             if i.getTypeModel() == "LightSensor":
                 return i
     
-    def haalTemperatuur(self):
+    def haalTemperatuur(self): #Methode om temperatuur om de 60 seconden te updaten in het frame van Unit1
         i = self.getTempSensorFromList()
         temperatuurdata = i.receiveData()
         temperatuurinc = round(i.convertToC(int(temperatuurdata[4:7])), 2) #Temperatuur is de data die door de formule gaat om Celsisus te berekenen, temperatuurdata[4:7] als int met een round van 2 decimalen
         i.setTemperature(temperatuurinc) #Geef de temperatuur waarde door aan de private variabele van de arduino
-        print(i.getTemperature()) #Weet niet hoe ik deze waarde kan updaten in het frame
         self.frames[Unit1].acttemplabel.config(text=f"Huidige temperatuur unit: {i.getTemperature()} C°")
         self.after(60000, self.haalTemperatuur)
 
-    def getMinEntryButton(self):
-            print(self.frames[Unit1].mintempentry.get())
-            return self.frames[Unit1].mintempentry.get()
+    def getMinEntryButton(self): #Methode om het tekstveld op te halen
+            intgetal = float(self.frames[Unit1].mintempentry.get()) * 10
+            intgetal = int(round(intgetal))
+            return intgetal
 
-    def getMaxEntryButton(self):
-            print(self.frames[Unit1].maxtempentry.get())
-            return self.frames[Unit1].maxtempentry.get()
+    def getMaxEntryButton(self): #Methode om het tekstveld op te halen
+            intgetal = float(self.frames[Unit1].maxtempentry.get()) * 10
+            intgetal = int(round(intgetal))
+            return intgetal
 
    
 class Unit1(tk.Frame):
@@ -112,12 +113,12 @@ class Unit1(tk.Frame):
         self.mintemplabel = tk.Label(self, text="Minimum temperatuur:").grid(row=1, column = 3)
         self.mintempentry = tk.Entry(self)
         self.mintempentry.grid(row=1, column = 4)
-        mintempbutton = tk.Button(self, text="Minimum temperatuur opslaan", command= lambda: controller.getTempSensorFromList().sendcommand(controller.getMinEntryButton()))
+        mintempbutton = tk.Button(self, text="Minimum temperatuur opslaan", command= lambda: controller.getTempSensorFromList().sendMinSetting(controller.getMinEntryButton()))
         mintempbutton.grid(row = 1, column = 5, padx = 10)
         self.maxtemplabel = tk.Label(self, text="Maximum temperatuur:").grid(row=2, column = 3)
         self.maxtempentry = tk.Entry(self)
         self.maxtempentry.grid(row=2, column = 4)
-        maxtempbutton = tk.Button(self, text="Maximum temperatuur opslaan", command= lambda: controller.getTempSensorFromList().sendcommand(controller.getMaxEntryButton()))
+        maxtempbutton = tk.Button(self, text="Maximum temperatuur opslaan", command= lambda: controller.getTempSensorFromList().sendMaxSetting(controller.getMaxEntryButton()))
         maxtempbutton.grid(row = 2, column = 5, padx = 10)
         self.acttemplabel = tk.Label(self, text=f"Huidige temperatuur: {self.showtemperature}") #Haalt minimum temperatuur van unit op
         self.acttemplabel.grid(row=0, column = 2, pady = 10, padx = 20)
@@ -129,7 +130,7 @@ class Unit1(tk.Frame):
         buttonled2.grid(row = 5, column = 2, pady = 10, padx = 5)
         buttonled3 = tk.Button(self, text="LED3", command=lambda: controller.getTempSensorFromList().sendcommand('3'))
         buttonled3.grid(row = 5, column = 3, pady = 10, padx = 5)
-        buttonled4 = tk.Button(self, text="LED4", command=lambda: controller.getTempSensorFromList().sendcommand('4'))
+        buttonled4 = tk.Button(self, text="LED4", command=lambda: controller.getTempSensorFromList().sendcommand('4'))     
         buttonled4.grid(row = 5, column = 4, pady = 10, padx = 5)
         buttonled5 = tk.Button(self, text="LEDUIT", command=lambda: controller.getTempSensorFromList().sendcommand('0'))
         buttonled5.grid(row = 5, column = 5, pady = 10, padx = 5)
