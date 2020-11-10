@@ -80,8 +80,15 @@ class MainUI(tk.Tk):
         i.setTemperature(temperatuurinc) #Geef de temperatuur waarde door aan de private variabele van de arduino
         print(i.getTemperature()) #Weet niet hoe ik deze waarde kan updaten in het frame
         self.frames[Unit1].acttemplabel.config(text=f"Huidige temperatuur unit: {i.getTemperature()} C°")
-        self.after(30000, self.haalTemperatuur)
+        self.after(60000, self.haalTemperatuur)
 
+    def getMinEntryButton(self):
+            print(self.frames[Unit1].mintempentry.get())
+            return self.frames[Unit1].mintempentry.get()
+
+    def getMaxEntryButton(self):
+            print(self.frames[Unit1].maxtempentry.get())
+            return self.frames[Unit1].maxtempentry.get()
 
    
 class Unit1(tk.Frame):
@@ -98,17 +105,22 @@ class Unit1(tk.Frame):
                             command=lambda: controller.show_frame(Unit2))
         button2.grid(row = 1, column = 0, pady = 10, padx = 20)
         labelinstellingen = tk.Label(self, text="Instellingen").grid(row=0, column = 4)
-        mintemplabel = tk.Label(self, text=f"Huidige minimumtemperatuur: {round(controller.getTempSensorFromList().getMinValue(), 2)}") #Haalt minimum temperatuur van unit op
-        mintemplabel.grid(row=1, column = 1, pady = 10, padx = 20)
-        maxtemplabel = tk.Label(self, text=f"Huidige maximumtemperatuur: {round(controller.getTempSensorFromList().getMaxValue(), 2)}") # Haalt maximum temperatuur van unit op
-        maxtemplabel.grid(row=2, column = 1, pady = 10, padx = 20)
-        mintemplabel = tk.Label(self, text="Minimum temperatuur:").grid(row=1, column = 3)
-        mintempentry = tk.Entry(self).grid(row=1, column = 4)
-        maxtemplabel = tk.Label(self, text="Maximum temperatuur:").grid(row=2, column = 3)
-        maxtempentry = tk.Entry(self).grid(row=2, column = 4)
+        minhuidiglabel = tk.Label(self, text=f"Huidige minimumtemperatuur: {round(controller.getTempSensorFromList().getMinValue(), 2)}") #Haalt minimum temperatuur van unit op
+        minhuidiglabel.grid(row=1, column = 1, pady = 10, padx = 20)
+        self.maxtemplabel = tk.Label(self, text=f"Huidige maximumtemperatuur: {round(controller.getTempSensorFromList().getMaxValue(), 2)}") # Haalt maximum temperatuur van unit op
+        self.maxtemplabel.grid(row=2, column = 1, pady = 10, padx = 20)
+        self.mintemplabel = tk.Label(self, text="Minimum temperatuur:").grid(row=1, column = 3)
+        self.mintempentry = tk.Entry(self)
+        self.mintempentry.grid(row=1, column = 4)
+        mintempbutton = tk.Button(self, text="Minimum temperatuur opslaan", command= lambda: controller.getTempSensorFromList().sendcommand(controller.getMinEntryButton()))
+        mintempbutton.grid(row = 1, column = 5, padx = 10)
+        self.maxtemplabel = tk.Label(self, text="Maximum temperatuur:").grid(row=2, column = 3)
+        self.maxtempentry = tk.Entry(self)
+        self.maxtempentry.grid(row=2, column = 4)
+        maxtempbutton = tk.Button(self, text="Maximum temperatuur opslaan", command= lambda: controller.getTempSensorFromList().sendcommand(controller.getMaxEntryButton()))
+        maxtempbutton.grid(row = 2, column = 5, padx = 10)
         self.acttemplabel = tk.Label(self, text=f"Huidige temperatuur: {self.showtemperature}") #Haalt minimum temperatuur van unit op
         self.acttemplabel.grid(row=0, column = 2, pady = 10, padx = 20)
-        opslaanbutton = tk.Button(self, text="Instellingen opslaan").grid(row = 3, column = 4)
         buttonomhoog = tk.Button(self, text="Scherm omhoog").grid(row = 4, column = 2, pady = 10)
         buttonomlaag = tk.Button(self, text="Scherm omlaag").grid(row = 4, column = 3, pady = 10)
         buttonled1 = tk.Button(self, text="LED1", command=lambda: controller.getTempSensorFromList().sendcommand('1'))
@@ -121,6 +133,7 @@ class Unit1(tk.Frame):
         buttonled4.grid(row = 5, column = 4, pady = 10, padx = 5)
         buttonled5 = tk.Button(self, text="LEDUIT", command=lambda: controller.getTempSensorFromList().sendcommand('0'))
         buttonled5.grid(row = 5, column = 5, pady = 10, padx = 5)
+
 
 
 class Unit2(tk.Frame):
