@@ -1,5 +1,6 @@
 import serial
-import time 
+import time
+import threading
 
 #klasse om te gebruiken met een arduino naar keuze
 class CentraleUnit: 

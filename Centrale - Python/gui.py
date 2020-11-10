@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import *
 import sys
 sys.path.append("..") # Path zetten voor imports
@@ -6,6 +7,7 @@ from CentraleUnit import CentraleUnit # Import van CentraleUnit klasse
 import time
 import serial
 from serial import SerialException
+import threading
 
 portnames = {"COM0", "COM1", "COM2", "COM3", "COM4", "COM5"}
 
