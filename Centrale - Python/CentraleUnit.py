@@ -1,6 +1,6 @@
 import serial
-import re
 import time
+import re
 import threading
 
 #klasse om te gebruiken met een arduino naar keuze
@@ -11,7 +11,6 @@ class CentraleUnit:
         self.typemodel = ""
         self.minvalue = 0
         self.maxvalue = 0
-        self.temperature = 0
 
     def getCOMPort(self):
         return self.COMport
