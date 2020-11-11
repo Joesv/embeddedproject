@@ -253,6 +253,7 @@ void Blinkie(){
 		PORTB &= ~(1<<PORTB2);
 		ledstate++;
 	}
+	//setLeds(ledstate);
 }
 
 void setLeds(uint8_t status){
@@ -312,14 +313,14 @@ void handleDistance(){
 
 void setupTasks(){
 	if(type == temperature){//als het temp is
-		SCH_Add_Task(getVal,100, 400); //tick staat op 10ms, na 1 sec meten en daarna elke 40 sec
+		SCH_Add_Task(getVal,100, 4000); //tick staat op 10ms, na 1 sec meten en daarna elke 40 sec
 		SCH_Add_Task(handleDistance, 105, 100);
-		SCH_Add_Task(broadcastVal, 600, 1200); // na 1 minuut beginnen met 1 keer per minuut sturen;
+		SCH_Add_Task(broadcastVal, 600, 6000); // na 1 minuut beginnen met 1 keer per minuut sturen;
 	}
 	if(type == light){//als het licht is
-		SCH_Add_Task(getVal, 100, 300); //na 1 seconde meten en daarna elke 30sec
+		SCH_Add_Task(getVal, 100, 3000); //na 1 seconde meten en daarna elke 30sec
 		SCH_Add_Task(handleDistance, 105, 100);
-		SCH_Add_Task(broadcastVal, 600,1200); // na een minuut elke minuut sturen
+		SCH_Add_Task(broadcastVal, 600,6000); // na een minuut elke minuut sturen
 	}
 
 	SCH_Add_Task(Blinkie, 10, 50); //knipperend ledje
