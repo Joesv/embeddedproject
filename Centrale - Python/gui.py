@@ -128,12 +128,12 @@ class MainUI(tk.Tk):
     def animate(self):
         self.a.clear()
         self.yar.append(float(self.unit1temperatuur)) # gooit de temperatuur in de y array
-        self.xar.append(self.xar[-1] + 6)
+        self.xar.append(self.xar[-1] + 60)
         print(self.xar)
         print(self.yar)
         self.a.plot(self.xar,self.yar)
         self.frames[Unit1].drawCanvas()
-        self.after(6000, self.animate)
+        self.after(60000, self.animate)
 
 class Menu(tk.Frame):
 
