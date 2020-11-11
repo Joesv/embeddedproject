@@ -1,4 +1,5 @@
 import serial
+import re
 import time
 import threading
 
@@ -41,16 +42,19 @@ class CentraleUnit:
 
     def getInitData(self):
         initdata = self.serialCon.readline().decode() #Ontcijfer wat er binnenkomt
-        typemodel = initdata[5:8] #Wat voor type arduino het betreft, word doorgestuurd vanuit C
-
+        filteredInit = self.filterString(initdata) #eventuele onzin eruit filteren
+        splitted = filteredInit.split(",") #in een lijst splitten op basis van de comma
+        typemodel = splitted[1]
         if typemodel == 'tmp': #Als het een temperatuursensor betreft:
             self.typemodel = "TempSensor"
-            self.minvalue = int(initdata[10:13])
-            self.maxvalue = int(initdata[14:])
+            self.minvalue = int(splitted[2])
+            self.maxvalue = int(splitted[3])
             self.minvalue = self.convertToC(self.minvalue)
             self.maxvalue = self.convertToC(self.maxvalue)
         else: #Als het een lichtsensor betreft:
-            typemodel = "LightSensor"
+            self.typemodel = "LightSensor"
+            self.minvalue = splitted[2]
+            self.maxvalue = splitted[3]
     
     def readCommand(self): #// readcommand is nodig om correct een byte te versturen. Zonder aanroep van deze methode werkt het versturen op serial niet. 
         self.serialCon.readline().decode("ascii")
@@ -83,7 +87,8 @@ class CentraleUnit:
 
     def checkPort(self): #//Returnt welke poort er daadwerkelijk wordt gebruikt voor seriële communicatie
         return self.serialCon.name
-
+    def filterString(self, data):
+        return re.sub('[^a-zA-Z0-9,]+', '', data)
     
 
 ########## TEST CODE ###########

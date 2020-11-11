@@ -75,7 +75,8 @@ class MainUI(tk.Tk):
     def haalTemperatuur(self): #Methode om temperatuur om de 60 seconden te updaten in het frame van Unit1
         i = self.getTempSensorFromList()
         temperatuurdata = i.receiveData()
-        temperatuurinc = round(i.convertToC(int(temperatuurdata[4:7])), 2) #Temperatuur is de data die door de formule gaat om Celsisus te berekenen, temperatuurdata[4:7] als int met een round van 2 decimalen
+        temperatuurdata = i.filterString(temperatuurdata) #filter eventuele rommel uit de string
+        temperatuurinc = round(i.convertToC(int(temperatuurdata.split(",")[1])), 2) #Temperatuur is de data die door de formule gaat om Celsisus te berekenen, 2e item in de list als int met een round van 2 decimalen
         i.setTemperature(temperatuurinc) #Geef de temperatuur waarde door aan de private variabele van de arduino
         self.frames[Unit1].acttemplabel.config(text=f"Huidige temperatuur unit: {i.getTemperature()} C°")
         self.after(60000, self.haalTemperatuur)
