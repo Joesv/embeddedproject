@@ -16,15 +16,11 @@ portnames = {"COM0", "COM1", "COM2", "COM3", "COM4", "COM5"}
 f = Figure(figsize=(5,4), dpi=100)
 a = f.add_subplot(111)
 
-def animate(i):
-    xar=[12,70]
-    yar=[13,66]
-    a.clear()
-    a.plot(xar,yar)
+yar = [18] 
+xar = [0]
+
 
 class MainUI(tk.Tk):
-    # Er moet hier ergens een while loop komen die om de halve minuut gegevens van de arduino ophaalt
-
     def __init__(self, *args, **kwargs):
         
         self.arduinolist = [] #Lijst waar de arduino's in komen te staan
@@ -199,10 +195,10 @@ class Unit1(tk.Frame):
         #buttonled5 = tk.Button(self, text="LEDUIT", command=lambda: controller.getTempSensorFromList().sendcommand('0'))
         #buttonled5.grid(row = 5, column = 5, pady = 10, padx = 5)
 
-    def drawCanvas(self):
-        canvas = FigureCanvasTkAgg(self.fdinkie, self)
+        canvas = FigureCanvasTkAgg(f, self)
         canvas.draw()
         canvas.get_tk_widget().grid(row = 6, column = 0)
+        
 
     def setConnected(self):
         self.isConnected = True
@@ -251,5 +247,13 @@ app.title("Dashboard Zeng Ltd. zonnescherm")
 app.checkUnit1()
 app.checkUnit2()
 app.haalTemperatuur()
-app.animate()
+def animate(i):
+    a.clear() # is nodig om ram te clearen
+    yar.append(float(app.unit1temperatuur)) # gooit de temperatuur in de y array
+    xar.append(xar[-1] + 6)
+    print(xar)
+    print(yar)
+    a.plot(xar,yar)
+
+ani = animation.FuncAnimation(f,animate, interval=6000)
 app.mainloop()
