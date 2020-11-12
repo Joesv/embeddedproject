@@ -1,7 +1,6 @@
-import serial
+import serial #benodigde import voor seriële verbinding
 import time
-import re
-import threading
+import re #regex om te filteren
 
 #klasse om te gebruiken met een arduino naar keuze
 class CentraleUnit: 
